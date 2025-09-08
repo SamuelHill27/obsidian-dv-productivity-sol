@@ -1,12 +1,13 @@
 // Globals
 const today = dv.date(dv.current().file.name);
+const taskDirs = [dv.current().file.folder, "Current", "Projects"];
 let clearSchedule = true;
 
 // Functions
 const isGroupedTask = (task) => {
 	const groupsDir = "Daily/Fleeting/Groups";
 	
-	const groupedTaskDates = dv.date(dv.pages('"' + groupsDir + '"').file.lists.text);
+	const groupedTaskDates = dv.date(dv.pages(`"${groupsDir}"`).file.lists.text);
 	
 	const isTaskInGroup = groupedTaskDates.some(date => dv.equal(date, task.due));
 	
@@ -15,7 +16,7 @@ const isGroupedTask = (task) => {
 		taskIsGroup = task.outlinks[0].path.includes(groupsDir);
 	}
 	
-	return !isTaskInGroup || taskIsGroup;
+	return isTaskInGroup && !taskIsGroup;
 }
 
 const displayTasks = (headerText, tasks) => {
@@ -27,10 +28,10 @@ const displayTasks = (headerText, tasks) => {
 }
 
 // Main
-const tasks = dv.pages('"' + dv.current().file.folder + '"').file.tasks
+const tasks = dv.pages(`"${taskDirs.join('" or "')}"`).file.tasks
 	.where(p => !p.completed && p.due)
 	.sort(p => p.due, 'desc')
-	.filter(p => isGroupedTask(p));
+	.filter(p => !isGroupedTask(p));
 
 dv.span("<-- [[Schedule]] ");
 
