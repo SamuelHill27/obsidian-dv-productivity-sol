@@ -30,18 +30,18 @@ const displayTasks = (headerText, tasks) => {
 // Main
 const tasks = dv.pages(`"${taskDirs.join('" or "')}"`).file.tasks
 	.where(p => !p.completed && p.due)
-	.sort(p => p.due, 'desc')
+	.sort(p => p.due, 'asc')
 	.filter(p => !isGroupedTask(p));
 
-dv.span("<-- [[Schedule]] ");
-
-displayTasks("This Week", tasks.where(task => task.due > today.plus({ days: 1 }) && task.due <= today.plus({ days: 7 })));
-
-displayTasks("Tomorrow", tasks.where(task => task.due > today && task.due <= today.plus({ days: 1 })));
+displayTasks("Today", tasks.where(task => task.due <= today));
 
 const yesterday = today.minus({ days: 1 }).toFormat("yyyy-MM-dd");
 dv.span(`<-- [[${yesterday}|Yesterday]]`);
 
-displayTasks("Today", tasks.where(task => task.due <= today));
+displayTasks("Tomorrow", tasks.where(task => task.due > today && task.due <= today.plus({ days: 1 })));
+
+displayTasks("This Week", tasks.where(task => task.due > today.plus({ days: 1 }) && task.due <= today.plus({ days: 7 })));
 
 clearSchedule && dv.paragraph("No tasks this week. Yay!");
+
+dv.span("<-- [[Schedule]] ");
