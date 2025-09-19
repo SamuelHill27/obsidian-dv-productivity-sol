@@ -1,7 +1,6 @@
 // Globals
 const today = dv.date(dv.current().file.name);
 const taskDirs = [dv.current().file.folder, "Current", "Projects"];
-let clearSchedule = true;
 
 // Functions
 const isGroupedTask = (task) => {
@@ -23,8 +22,9 @@ const displayTasks = (headerText, tasks) => {
 	if (tasks.length > 0) {
 		dv.header(2, headerText)
 		dv.taskList(tasks, false); // false: don't group by file
-		clearSchedule = false;
+		return true;
 	}
+	return false;
 }
 
 // Main
@@ -33,15 +33,15 @@ const tasks = dv.pages(`"${taskDirs.join('" or "')}"`).file.tasks
 	.sort(p => p.due, 'asc')
 	.filter(p => !isGroupedTask(p));
 
-displayTasks("Today", tasks.where(task => task.due <= today));
+displayTasks("Today", tasks.where(task => task.due <= today)) ? null : dv.paragraph("No tasks today. Yay!");
 
 const yesterday = today.minus({ days: 1 }).toFormat("yyyy-MM-dd");
 dv.span(`<-- [[${yesterday}|Yesterday]]`);
 
-displayTasks("Tomorrow", tasks.where(task => task.due > today && task.due <= today.plus({ days: 1 })));
+const isTasksTomorrow = displayTasks("Tomorrow", tasks.where(task => task.due > today && task.due <= today.plus({ days: 1 })));
 
-displayTasks("This Week", tasks.where(task => task.due > today.plus({ days: 1 }) && task.due <= today.plus({ days: 7 })));
+const isTasksThisWeek = displayTasks("This Week", tasks.where(task => task.due > today.plus({ days: 1 }) && task.due <= today.plus({ days: 7 })));
 
-clearSchedule && dv.paragraph("No tasks this week. Yay!");
+isTasksTomorrow || isTasksThisWeek ? null : dv.paragraph("No tasks this week. Yay!");
 
 dv.span("<-- [[Schedule]] ");

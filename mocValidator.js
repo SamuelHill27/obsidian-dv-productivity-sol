@@ -13,8 +13,8 @@ const display = (contentNames, contentType) => {
 // Main
 // get all outlink names
 const bulletedListItems = dv.current().file.lists.filter(l => !l.task);
-const contentOutlinks = bulletedListItems.map(bli => bli.outlinks).filter(ol => ol.length > 0);
-const contentOutlinksNames = contentOutlinks.map(col => col[0].path);
+const contentOutlinks = bulletedListItems.map(bli => bli.outlinks).filter(ol => ol.length > 0); // only keep items with outlinks
+const contentOutlinksNames = contentOutlinks.map(col => col[0].display);
 
 // get all page names
 const contentPages = dv.pages(`"${dv.current().file.folder}"`).file;
