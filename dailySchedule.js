@@ -30,8 +30,9 @@ const displayTasks = (headerText, tasks) => {
 // Main
 const tasks = dv.pages(`"${taskDirs.join('" or "')}"`).file.tasks
 	.where(p => !p.completed && p.due)
+	.filter(p => !isGroupedTask(p))
 	.sort(p => p.due, 'asc')
-	.filter(p => !isGroupedTask(p));
+	.sort(p => p.dueTime, `asc`);
 
 displayTasks("Today", tasks.where(task => task.due <= today)) ? null : dv.paragraph("No tasks today. Yay!");
 
