@@ -18,17 +18,6 @@ const isGroupedTask = (task) => {
 	return isTaskInGroup && !taskIsGroup;
 }
 
-const addDueTime = (task) => {
-	if (!task.dueTime) {
-		task.dueTime = "23:59"; // Default due time if none is set
-	}
-
-	task.due = task.due.set({
-		hour: Number(task.dueTime.split(":")[0]),
-		minute: Number(task.dueTime.split(":")[1])
-	});
-}
-
 const displayTasks = (headerText, tasks) => {
 	if (tasks.length > 0) {
 		dv.header(2, headerText)
@@ -42,13 +31,18 @@ const displayTasks = (headerText, tasks) => {
 let tasks = dv.pages(`"${taskDirs.join('" or "')}"`).file.tasks
 	.where(t => !t.completed && t.due)
 	.filter(t => !isGroupedTask(t))
-tasks.forEach(addDueTime);
+
+// set tasks without time to latest time to prioritize tasks with time when sorted
+const isTimeSet = (task) => 
+	!(task.due.hour == 23 && task.due.minute == 59) && // default time after resetting?
+	!(task.due.hour == 0 && task.due.minute == 0); // default time before resetting
+tasks.forEach(t => !isTimeSet(t) ? t.due = t.due.set({ hour: 23, minute: 59 }) : null);
 
 const isTasksToday = displayTasks("Today", tasks
 	.where(task => task.due <= today)
 	.sort(t => t.due, "asc"));
 
-isTasksToday? null : dv.paragraph("No tasks today. Yay!");
+isTasksToday ? null : dv.paragraph("No tasks today. Yay!");
 
 const yesterday = today.minus({ days: 1 }).toFormat("yyyy-MM-dd");
 dv.span(`<-- [[${yesterday}|Yesterday]]`);
