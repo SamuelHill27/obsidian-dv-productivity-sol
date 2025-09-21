@@ -29,18 +29,16 @@ const displayTasks = (headerText, tasks) => {
 
 // Main
 let tasks = dv.pages(`"${taskDirs.join('" or "')}"`).file.tasks
-	.where(t => !t.completed && t.due)
-	.filter(t => !isGroupedTask(t))
+	.where(task => !task.completed && task.due)
+	.filter(task => !isGroupedTask(task))
 
 // set tasks without time to latest time to prioritize tasks with time when sorted
-const isTimeSet = (task) => 
-	!(task.due.hour == 23 && task.due.minute == 59) && // default time after resetting?
-	!(task.due.hour == 0 && task.due.minute == 0); // default time before resetting
-tasks.forEach(t => !isTimeSet(t) ? t.due = t.due.set({ hour: 23, minute: 59 }) : null);
+const isTimeSet = (task) => !(task.due.hour == 0 && task.due.minute == 0); // default time before resetting
+tasks.forEach(task => !isTimeSet(task) ? task.due = task.due.set({ hour: 23, minute: 59 }) : null);
 
 const isTasksToday = displayTasks("Today", tasks
 	.where(task => task.due <= today)
-	.sort(t => t.due, "asc"));
+	.sort(task => task.due, "asc"));
 
 isTasksToday ? null : dv.paragraph("No tasks today. Yay!");
 
@@ -49,11 +47,11 @@ dv.span(`<-- [[${yesterday}|Yesterday]]`);
 
 const isTasksTomorrow = displayTasks("Tomorrow", tasks
 	.where(task => task.due > today && task.due <= today.plus({ days: 1 }))
-	.sort(t => t.due, "asc"));
+	.sort(task => task.due, "asc"));
 
 const isTasksThisWeek = displayTasks("This Week", tasks
 	.where(task => task.due > today.plus({ days: 1 }) && task.due <= today.plus({ days: 7 }))
-	.sort(t => t.due, "asc"));
+	.sort(task => task.due, "asc"));
 
 isTasksTomorrow || isTasksThisWeek ? null : dv.paragraph("No tasks this week. Yay!");
 
