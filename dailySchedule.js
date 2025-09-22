@@ -18,18 +18,6 @@ const isGroupedTask = (task) => {
 	return isTaskInGroup && !taskIsGroup;
 }
 
-const handleTaskTime = (task) => {
-	// tasks with time have due attribute in string format
-	if (typeof task.due == "string") {
-		task.due = dv.date(task.due.replace(' ', 'T')); // yyyy-MMM-dd HH:mm -> T between date and time is ISO format
-	}
-
-	// set time of tasks without time to latest time to prioritize tasks with time when sorted
-	if (task.due.hour == 0 && task.due.minute == 0) {
-		task.due = task.due.set({ hour: 23, minute: 59 });
-	}
-}
-
 const displayTasks = (headerText, tasks) => {
 	if (tasks.length > 0) {
 		dv.header(2, headerText)
@@ -44,7 +32,7 @@ let tasks = dv.pages(`"${taskDirs.join('" or "')}"`).file.tasks
 	.where(task => !task.completed && task.due)
 	.filter(task => !isGroupedTask(task))
 
-tasks.forEach(task => handleTaskTime(task));
+tasks.forEach(task => task.due.hour == 0 && task.due.minute == 0 ? task.due = task.due.set({ hour: 23, minute: 59 }) : null);
 
 const isTasksToday = displayTasks("Today", tasks
 	.where(task => task.due <= today)
@@ -66,3 +54,4 @@ const isTasksThisWeek = displayTasks("This Week", tasks
 isTasksTomorrow || isTasksThisWeek ? null : dv.paragraph("No tasks this week. Yay!");
 
 dv.span("<-- [[Schedule]] ");
+
