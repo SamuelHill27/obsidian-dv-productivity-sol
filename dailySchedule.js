@@ -19,12 +19,10 @@ const isGroupedTask = (task) => {
 }
 
 const displayTasks = (headerText, tasks) => {
-	if (tasks.length > 0) {
-		dv.header(2, headerText)
-		dv.taskList(tasks, false); // false: don't group by file
-		return true;
-	}
-	return false;
+	if (tasks.length <= 0) return false;
+	dv.header(2, headerText)
+	dv.taskList(tasks, false); // false: don't group by file
+	return true;
 }
 
 // Main
