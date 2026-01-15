@@ -4,6 +4,8 @@ const rtf = new Intl.RelativeTimeFormat("en", {
 	numeric: 'auto' 
 });
 
+const dirs = ["Current", "Uni Notes", "Wiki", "Projects"];
+
 // Functions
 const getRelDatePeriod = (differenceInDays) => {
 	const daysInPeriod = [["year", 365], ["month", 30], ["week", 7], ["day", 1]];
@@ -25,9 +27,8 @@ const getRelDate = (date) => {
 const titleCase = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
 // Main
-const folderName = dv.current().file.folder.split('/').pop();
-const recents = dv.pages(`"${dv.current().file.folder}"`)
-	.filter(p => p.file.name != folderName)
+const recents = dv.pages(`"${dirs.join('" or "')}"`)
+	.filter(p => p.file.name != p.file.folder.split('/').pop())
 	.sort(p => p.file.mtime, "desc")
 	.slice(0, 3);
 

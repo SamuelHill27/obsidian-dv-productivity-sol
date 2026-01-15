@@ -45,6 +45,8 @@ const isTasksTomorrow = displayTasks("Tomorrow", tasks
 const isTasksThisWeek = displayTasks("This Week", tasks
 	.where(task => task.due > today.plus({ days: 1 }) && task.due <= today.plus({ days: 7 })));
 
+console.log(tasks.where(task => task.due > today.plus({ days: 1 }) && task.due <= today.plus({ days: 7 })));
+
 isTasksTomorrow || isTasksThisWeek ? null : dv.paragraph("No tasks this week. Yay!");
 
 dv.span("<-- [[Schedule]] ");
