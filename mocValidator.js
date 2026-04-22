@@ -22,10 +22,7 @@ const contentOutlinksNames = contentOutlinks.map(col => col[0].display);
 const contentPages = dv.pages(`"${dv.current().file.folder}"`).file.filter(p => p.folder == dv.current().file.folder);
 const contentPagesNames = contentPages.map(cp => cp.name).filter(cpn => cpn != dv.current().file.name);
 
-// orphaned
 const orphaned = contentPagesNames.filter(cpn => !contentOutlinksNames.includes(cpn));
-
-// moved
 const moved = contentOutlinksNames.filter(coln => !contentPagesNames.includes(coln));
 
 // normal
